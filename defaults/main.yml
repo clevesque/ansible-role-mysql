@@ -1,4 +1,9 @@
 ---
+# clev added
+# Helps us understand if root pw was reset already, like when MySQL has a Temp password set on install
+root_pw_changed: false
+
+
 # Set this to the user ansible is logging in as - should have root
 # or sudo access
 mysql_user_home: /root
