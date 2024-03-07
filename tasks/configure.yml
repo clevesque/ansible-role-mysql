@@ -35,6 +35,27 @@
   with_items: "{{ mysql_config_include_files }}"
   notify: restart mysql
 
+- name: Create parent directory for mysql_pid_file if it does not exist
+  file:
+    path: "{{ mysql_pid_file.split('/')[0:-1]|join('/') }}"
+    state: directory
+    recurse: yes
+    force: no
+    owner: mysql
+    group: mysql
+    mode: 0755
+    setype: mysqld_db_t
+
+- name: Create mysql_pid_file if it does not exist
+  copy:
+    content: ""
+    dest: "{{ mysql_pid_file }}"
+    force: no
+    owner: mysql
+    group: mysql
+    mode: 0755
+    setype: mysqld_db_t
+
 - name: Create slow query log file (if configured).
   ansible.builtin.command: "touch {{ mysql_slow_query_log_file }}"
   args:
