@@ -1,4 +1,8 @@
 ---
+
+# Check for MySQL generated Temp password and reset
+- include: temp_root_password.yml
+
 - name: Ensure default user is present.
   mysql_user:
     name: "{{ mysql_user_name }}"
@@ -51,6 +55,7 @@
   when: >
     ((mysql_install_packages | bool) or mysql_root_password_update)
     and ('5.7.' in mysql_cli_version.stdout or '8.0.' in mysql_cli_version.stdout)
+    and not root_pw_changed
 
 # Set root password for MySQL < 5.7.x.
 - name: Update MySQL root password for localhost root account (< 5.7.x).
@@ -62,6 +67,7 @@
   when: >
     ((mysql_install_packages | bool) or mysql_root_password_update)
     and ('5.7.' not in mysql_cli_version.stdout and '8.0.' not in mysql_cli_version.stdout)
+    and not root_pw_changed
 
 # Has to be after the root password assignment, for idempotency.
 - name: Copy .my.cnf file with root password credentials.
